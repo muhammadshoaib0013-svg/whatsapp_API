@@ -3,6 +3,8 @@ import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/db';
 import { DatabaseUnavailableError } from '@/lib/auth/session';
 
+export const dynamic = 'force-dynamic';
+
 interface TeamAnalyticsData {
   agentId: string;
   agentName: string;

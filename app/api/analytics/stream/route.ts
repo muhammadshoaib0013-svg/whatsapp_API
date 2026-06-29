@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { analyticsStreamManager } from '@/lib/websocket/analytics-stream';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**

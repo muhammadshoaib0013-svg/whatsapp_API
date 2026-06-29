@@ -3,7 +3,6 @@ import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/db';
 import { generateApiKey, hashApiKey } from '@/lib/security/api-auth';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**

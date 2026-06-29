@@ -3,7 +3,6 @@ import { getSession } from '@/lib/auth/session';
 import { requireSuperAdmin } from '@/lib/auth/super-admin';
 import { prisma } from '@/lib/db';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**

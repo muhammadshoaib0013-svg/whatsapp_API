@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import Redis from 'ioredis';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**

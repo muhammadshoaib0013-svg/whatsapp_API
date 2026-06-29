@@ -4,7 +4,6 @@ import { requireSuperAdmin } from '@/lib/auth/super-admin';
 import { prisma } from '@/lib/db';
 import { SubscriptionPlan } from '@prisma/client';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**

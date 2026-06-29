@@ -4,7 +4,6 @@ import { getAnalyticsSummaryWithCache } from '@/lib/cache/analytics-cache';
 import { getQuickMetrics } from '@/lib/services/analytics-service';
 import { getCostSummary } from '@/lib/billing/cost-tracker';
 
-// Force dynamic route to avoid static generation issues
 export const dynamic = 'force-dynamic';
 
 /**
