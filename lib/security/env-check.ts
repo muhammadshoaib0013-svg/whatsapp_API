@@ -11,7 +11,6 @@ const REQUIRED_ENV_VARS = [
   'SESSION_SECRET',
   'TOKEN_ENCRYPTION_KEY',
   'META_APP_SECRET',
-  'OPENAI_API_KEY',
 ] as const;
 
 const OPTIONAL_ENV_VARS = [
@@ -22,6 +21,8 @@ const OPTIONAL_ENV_VARS = [
   'STRIPE_PRICE_GROWTH',
   'STRIPE_PRICE_AGENCY',
   'NEXT_PUBLIC_APP_URL',
+  'OPENAI_API_KEY',
+  'GEMINI_API_KEY',
 ] as const;
 
 interface EnvCheckResult {

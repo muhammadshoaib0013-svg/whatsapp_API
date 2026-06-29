@@ -27,11 +27,10 @@
     "recharts": "^3.9.0",
     "resend": "^6.16.0",
     "stripe": "^22.3.0",
-    "@prisma/client": "^6.19.3"
+    "@prisma/client": "^6.19.3",
     "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@prisma/client": "^6.19.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.0",
     "@types/papaparse": "^5.5.2",

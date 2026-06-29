@@ -1,9 +1,8 @@
 import { prisma } from '@/lib/db';
-import { openai, isOpenAIConfigured } from '@/lib/ai/openai-client';
+import { isLLMConfigured, getLLMCompletion } from '@/lib/ai/llm-failover-service';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 const SYSTEM_PROMPT = 'You are a helpful customer support assistant. Keep answers short and precise.';
-const MODEL = 'gpt-4o-mini';
 const CONTEXT_MESSAGE_COUNT = 10;
 
 interface AiMessageResult {
@@ -13,7 +12,7 @@ interface AiMessageResult {
 
 /**
  * Handle AI message processing
- * Fetches conversation context and calls OpenAI Chat Completions API
+ * Fetches conversation context and calls LLM with failover (Gemini Primary, OpenAI Fallback)
  * Returns null if AI fails or confidence is low (to trigger human handoff)
  */
 export async function handleAiMessage(
@@ -25,10 +24,10 @@ export async function handleAiMessage(
   console.log('[AI_CHATBOT] Chat session:', chatSessionId);
   console.log('[AI_CHATBOT] Customer message:', customerMessage);
 
-  // Check if OpenAI is configured
-  if (!isOpenAIConfigured()) {
-    console.warn('[AI_CHATBOT] OpenAI not configured');
-    return { response: null, error: 'OpenAI not configured' };
+  // Check if LLM is configured
+  if (!isLLMConfigured()) {
+    console.warn('[AI_CHATBOT] LLM not configured');
+    return { response: null, error: 'LLM not configured' };
   }
 
   try {
@@ -51,7 +50,7 @@ export async function handleAiMessage(
 
     console.log('[AI_CHATBOT] Fetched', messages.length, 'messages for context');
 
-    // Build conversation history for OpenAI
+    // Build conversation history for LLM
     const conversationHistory: ChatCompletionMessageParam[] = messages.map((msg) => ({
       role: msg.direction === 'INBOUND' ? 'user' : 'assistant',
       content: msg.content,
@@ -72,28 +71,26 @@ export async function handleAiMessage(
       ...conversationHistory,
     ];
 
-    console.log('[AI_CHATBOT] Calling OpenAI API with', apiMessages.length, 'messages');
+    console.log('[AI_CHATBOT] Calling LLM with failover (Gemini Primary, OpenAI Fallback) with', apiMessages.length, 'messages');
 
-    // Call OpenAI Chat Completions API
-    const completion = await openai!.chat.completions.create({
-      model: MODEL,
+    // Call LLM with failover mechanism
+    const result = await getLLMCompletion({
       messages: apiMessages,
-      max_tokens: 500,
+      maxTokens: 500,
       temperature: 0.7,
     });
 
-    const aiResponse = completion.choices[0]?.message?.content;
-
-    if (!aiResponse) {
-      console.warn('[AI_CHATBOT] OpenAI returned empty response');
-      return { response: null, error: 'Empty response from AI' };
+    if (!result.content) {
+      console.warn('[AI_CHATBOT] LLM returned empty response. Provider:', result.provider, 'Error:', result.error);
+      return { response: null, error: result.error || 'Empty response from LLM' };
     }
 
-    console.log('[AI_CHATBOT] AI response generated:', aiResponse.substring(0, 100));
+    console.log('[AI_CHATBOT] AI response generated from provider:', result.provider);
+    console.log('[AI_CHATBOT] Response:', result.content.substring(0, 100));
 
-    return { response: aiResponse };
+    return { response: result.content };
   } catch (error) {
-    console.error('[AI_CHATBOT] OpenAI API error:', error);
+    console.error('[AI_CHATBOT] LLM processing error:', error);
     
     // Return null to trigger human handoff on any error
     return {
