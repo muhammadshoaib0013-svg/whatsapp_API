@@ -5,7 +5,6 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   productionBrowserSourceMaps: false,
-  output: 'standalone',
   // Optimize images for production
   images: {
     domains: [],
