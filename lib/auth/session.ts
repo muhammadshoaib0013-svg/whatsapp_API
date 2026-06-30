@@ -34,12 +34,8 @@ export interface SessionData {
 const SESSION_COOKIE_NAME = 'session';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-// Get SESSION_SECRET from environment
+// Get SESSION_SECRET from environment (checked at runtime, not build time)
 const SESSION_SECRET = process.env.SESSION_SECRET || '';
-
-if (!SESSION_SECRET) {
-  throw new Error('SESSION_SECRET environment variable is required');
-}
 
 // Safe Base64URL encoding/decoding helpers
 function base64UrlEncode(value: string): string {
@@ -52,6 +48,10 @@ function base64UrlDecode(value: string): string {
 
 // HMAC signing for session security using Web Crypto API
 async function signSession(data: string): Promise<string> {
+  if (!SESSION_SECRET) {
+    throw new Error('SESSION_SECRET environment variable is required');
+  }
+  
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',

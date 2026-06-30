@@ -16,6 +16,13 @@ COPY . .
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Provide dummy build-time environment variables for Next.js build
+ARG SESSION_SECRET="dummy_build_secret"
+ARG DATABASE_URL="dummy_database_url"
+ARG DIRECT_DATABASE_URL="dummy_direct_database_url"
+ARG TOKEN_ENCRYPTION_KEY="dummy_token_encryption_key"
+ARG NEXTAUTH_SECRET="dummy_nextauth_secret"
+
 # Build the Next.js application
 RUN npm run build
 
